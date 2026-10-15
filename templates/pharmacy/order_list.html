@@ -1,0 +1,6 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}My Orders | LifeCare Pharmacy{% endblock %}
+{% block content %}
+<section class="page-hero compact-hero"><div class="page-hero-inner"><span class="eyebrow">Your account</span><h1>My orders</h1><p>Track demo orders placed from this account.</p></div></section>
+<section class="section orders-section">{% for order in orders %}<a href="{% url 'order_detail' order.order_number %}" class="order-card"><div class="order-card-main"><span class="order-number">{{ order.order_number }}</span><span class="order-date">{{ order.created_at|date:"M j, Y · g:i A" }}</span><span class="order-products">{% for item in order.items.all %}{{ item.product.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</span></div><div class="order-card-side"><span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span><strong>₹{{ order.total }}</strong><span class="order-arrow">→</span></div></a>{% empty %}<div class="empty-cart"><span class="empty-icon">⌂</span><h2>No orders yet</h2><p>Your demo orders will appear here after checkout.</p><a class="button button-primary" href="{% url 'product_list' %}">Browse medicines <span>→</span></a></div>{% endfor %}</section>
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Pay with Razorpay | LifeCare Pharmacy{% endblock %}
+{% block content %}
+<section class="section payment-section">
+  <div class="confirmation-head">
+    <span class="confirmation-check">✓</span>
+    <span class="eyebrow">Secure payment</span>
+    <h1>Complete your order</h1>
+    <p>Your medicine order total is ₹{{ display_amount|floatformat:2 }}.</p>
+  </div>
+
+  <div class="confirmation-panel payment-panel">
+    <h2>Payment details</h2>
+    <p><strong>Order</strong><br>{{ description }}</p>
+    <p><strong>Amount</strong><br>₹{{ display_amount|floatformat:2 }}</p>
+    <fieldset class="payment-method-options">
+      <legend>Choose a payment method</legend>
+      <label class="payment-method-option">
+        <input type="radio" name="payment-method" value="upi" checked>
+        <span><strong>UPI</strong><small>Enter your UPI ID in secure checkout</small></span>
+      </label>
+      <label class="payment-method-option">
+        <input type="radio" name="payment-method" value="card">
+        <span><strong>Debit or credit card</strong><small>Enter your card details in secure checkout</small></span>
+      </label>
+    </fieldset>
+    <p class="payment-security-note">Payment details are entered securely with Razorpay and are never stored by LifeCare Pharmacy.</p>
+    <button id="pay-btn" class="button button-primary button-full" type="button">Pay with Razorpay <span>→</span></button>
+    <p id="payment-error" class="field-error" role="alert" hidden></p>
+  </div>
+</section>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  const razorpayOptions = {
+    key: "{{ key_id|escapejs }}",
+    amount: "{{ amount }}",
+    currency: "{{ currency|escapejs }}",
+    name: "LifeCare Pharmacy",
+    description: "{{ description|escapejs }}",
+    order_id: "{{ order_id|escapejs }}",
+    handler: function (response) {
+      const formData = new FormData();
+      formData.append("razorpay_payment_id", response.razorpay_payment_id);
+      formData.append("razorpay_order_id", response.razorpay_order_id);
+      formData.append("razorpay_signature", response.razorpay_signature);
+      formData.append("csrfmiddlewaretoken", "{{ csrf_token|escapejs }}");
+
+      fetch("{% url 'razorpay_verify' %}", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData,
+        headers: {
+          "X-CSRFToken": "{{ csrf_token|escapejs }}"
+        }
+      })
+      .then((result) => result.json())
+      .then((data) => {
+        if (data.status === "success") {
+          window.location.href = data.redirect_url;
+          return;
+        }
+        alert(data.message || "Payment verification failed.");
+      })
+      .catch(() => {
+        alert("Payment verification could not be completed. Please contact support before trying again.");
+      });
+    },
+    prefill: {
+      name: "{{ request.user.get_full_name|default:request.user.username|escapejs }}",
+      email: "{{ request.user.email|default:''|escapejs }}",
+      contact: ""
+    },
+    theme: {
+      color: "#1f6f52"
+    }
+  };
+
+  const showPaymentError = (message) => {
+    const error = document.getElementById("payment-error");
+    error.textContent = message;
+    error.hidden = false;
+  };
+
+  document.getElementById("pay-btn").addEventListener("click", function () {
+    if (typeof Razorpay === "undefined") {
+      showPaymentError("The Razorpay checkout could not be loaded. Check your internet connection and try again.");
+      return;
+    }
+    const method = document.querySelector('input[name="payment-method"]:checked').value;
+    const methodLabel = method === "upi" ? "UPI" : "debit or credit card";
+    const checkoutOptions = {
+      ...razorpayOptions,
+      config: {
+        display: {
+          blocks: {
+            selected_method: {
+              name: `Pay using ${methodLabel}`,
+              instruments: [{ method }]
+            }
+          },
+          sequence: ["block.selected_method"],
+          preferences: { show_default_blocks: false }
+        }
+      }
+    };
+    const checkout = new Razorpay(checkoutOptions);
+    checkout.on("payment.failed", function (response) {
+      const failure = response.error || {};
+      const reason = failure.description || failure.reason;
+      showPaymentError(
+        reason
+          ? `Payment failed: ${reason}`
+          : "Payment failed. Check your payment details or try another payment method."
+      );
+    });
+    checkout.open();
+  });
+</script>
+{% endblock %}

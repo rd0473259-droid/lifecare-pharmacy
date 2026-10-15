@@ -1,0 +1,13 @@
+{% load static %}
+<article class="product-card">
+  <a class="product-image-link" href="{% url 'product_detail' product.pk %}">
+    <span class="product-image"><img src="{% if product.image %}{% static product.image %}{% else %}{% static 'products/tablets.svg' %}{% endif %}" alt="{{ product.name }}" loading="lazy"></span>
+    {% if product.prescription_required %}<span class="product-tag tag-prescription">Prescription required</span>{% else %}<span class="product-tag">Everyday care</span>{% endif %}
+  </a>
+  <div class="product-info">
+    <span class="product-category">{{ product.category.name }}</span>
+    <a class="product-name" href="{% url 'product_detail' product.pk %}">{{ product.name }}</a>
+    <div class="product-meta"><strong>₹{{ product.price }}</strong>{% if product.stock > 0 %}<span class="stock-in">In stock</span>{% else %}<span class="stock-out">Out of stock</span>{% endif %}</div>
+    {% if product.stock > 0 %}<form method="post" action="{% url 'cart_add' product.pk %}" class="card-add-form">{% csrf_token %}<input type="hidden" name="quantity" value="1"><input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="add-button" type="submit">Add to cart <span>+</span></button></form>{% else %}<button class="add-button disabled" disabled>Currently unavailable</button>{% endif %}
+  </div>
+</article>

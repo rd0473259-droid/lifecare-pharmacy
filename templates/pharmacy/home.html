@@ -1,0 +1,62 @@
+{% extends "pharmacy/base.html" %}
+{% load static %}
+{% block title %}LifeCare Pharmacy | Your Health, Our Priority{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> Care that feels closer</span>
+    <h1>Your health,<br><em>our priority.</em></h1>
+    <p class="hero-subtitle">Find everyday wellness essentials in one simple place. Thoughtfully organized, easy to browse, made for this project demo.</p>
+    <form class="hero-search" action="{% url 'product_list' %}" method="get">
+      <span class="search-icon" aria-hidden="true">⌕</span>
+      <input type="search" name="q" placeholder="Search medicines and wellness" aria-label="Search medicines">
+      <button type="submit">Search <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="hero-actions"><a class="button button-primary" href="{% url 'product_list' %}">Browse medicines <span>→</span></a><span class="hero-note"><span class="shield-icon">✓</span> Secure demo ordering</span></div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-circle hero-circle-back"></div><div class="hero-circle hero-circle-front"></div>
+    <div class="hero-bloom"><span class="bloom-cross">+</span><span class="bloom-leaf leaf-one"></span><span class="bloom-leaf leaf-two"></span><span class="bloom-leaf leaf-three"></span><span class="bloom-leaf leaf-four"></span></div>
+    <div class="floating-note note-top"><span class="note-icon">✳</span><span><strong>Here for everyday care</strong><small>Wellness made simpler</small></span></div>
+    <div class="floating-note note-bottom"><span class="note-check">✓</span><span><strong>Simple checkout</strong><small>Cash on delivery or online payment</small></span></div>
+    <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+  </div>
+  <div class="hero-bottom"><span>Thoughtful care, right around the corner</span><span class="hero-bottom-line"></span><span>01 — 06</span></div>
+</section>
+
+<section class="trust-row">
+  <div><span class="trust-icon">✦</span><span><strong>Curated essentials</strong><small>Everyday care in one place</small></span></div>
+  <div><span class="trust-icon">⌂</span><span><strong>Simple ordering</strong><small>Easy-to-follow checkout</small></span></div>
+  <div><span class="trust-icon">♡</span><span><strong>Carefully considered</strong><small>Designed around your needs</small></span></div>
+</section>
+
+<section class="section category-section">
+  <div class="section-heading"><div><span class="eyebrow">Find what you need</span><h2>Care for every day</h2></div><a class="text-link" href="{% url 'category_list' %}">All categories <span>→</span></a></div>
+  <div class="category-grid">
+    {% for category in categories %}
+    <a class="category-card" href="{% url 'category_detail' category.pk %}">
+      <span class="category-visual category-visual-{{ forloop.counter }}"><span>{% cycle "✳" "◉" "✚" "❋" "♡" "⌁" %}</span></span>
+      <span class="category-title">{{ category.name }}</span><span class="category-link">Explore <b>↗</b></span>
+    </a>
+    {% empty %}<div class="empty-state">Categories will appear here after you run <code>seed_products</code>.</div>{% endfor %}
+  </div>
+</section>
+
+<section class="section featured-section">
+  <div class="section-heading"><div><span class="eyebrow">A good place to start</span><h2>Popular essentials</h2></div><a class="text-link" href="{% url 'product_list' %}">View all medicines <span>→</span></a></div>
+  <div class="product-grid">
+    {% for product in featured_products %}{% include "pharmacy/partials/product_card.html" %}{% empty %}
+    <div class="empty-state">Sample products are ready to seed. Run <code>python manage.py seed_products</code>.</div>{% endfor %}
+  </div>
+</section>
+
+<section class="why-section">
+  <div class="why-art"><span class="why-blob"></span><span class="why-cross">+</span><span class="why-leaf"></span><span class="why-badge">Care<br>first</span></div>
+  <div class="why-copy"><span class="eyebrow">A little more thoughtful</span><h2>Good care starts<br>with the little things.</h2><p>LifeCare Pharmacy is a student-built demonstration of how a helpful medicine ordering experience can work. Browse at your own pace and explore each step from cart to confirmation.</p>
+    <div class="why-points"><div><span>01</span><p><strong>Easy to navigate</strong><small>Clear categories and useful product details.</small></p></div><div><span>02</span><p><strong>Secure by design</strong><small>Sign in to place and review your demo orders.</small></p></div></div>
+    <a class="button button-outline" href="{% url 'product_list' %}">Explore LifeCare <span>→</span></a>
+  </div>
+</section>
+
+<section class="disclaimer-band"><span class="disclaimer-symbol">i</span><p><strong>For educational demonstration only.</strong> This project does not provide real medicines, pharmacy services, prescription verification, or delivery. Any online payment is handled by the configured Razorpay account; use test credentials only. Prescription decisions require review by an authorized pharmacy professional.</p></section>
+{% endblock %}

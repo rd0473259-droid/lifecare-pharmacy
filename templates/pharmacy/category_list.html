@@ -1,0 +1,6 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Categories | LifeCare Pharmacy{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="page-hero-inner"><span class="eyebrow">Browse by need</span><h1>Explore categories</h1><p>Find fictional products grouped into simple, familiar categories.</p></div></section>
+<section class="section category-page-grid">{% for category in categories %}<a class="category-card category-card-large" href="{% url 'category_detail' category.pk %}"><span class="category-visual category-visual-{{ forloop.counter }}"><span>{% cycle "✳" "◉" "✚" "❋" "♡" "⌁" %}</span></span><span class="category-title">{{ category.name }}</span><span class="category-description">{{ category.description }}</span><span class="category-link">Browse products <b>→</b></span></a>{% empty %}<div class="empty-state">Run the sample-data command to add categories.</div>{% endfor %}</section>
+{% endblock %}

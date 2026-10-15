@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="LifeCare Pharmacy — Your Health, Our Priority. A college demonstration medicine ordering system.">
+  <title>{% block title %}LifeCare Pharmacy{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="{% url 'home' %}" aria-label="LifeCare Pharmacy home">
+        <span class="brand-mark" aria-hidden="true"><span>+</span></span>
+        <span><strong>LifeCare Pharmacy</strong><small>YOUR HEALTH, OUR PRIORITY</small></span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open navigation">☰</button>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'product_list' %}">Medicines</a>
+        <a href="{% url 'category_list' %}">Categories</a>
+        <a href="{% url 'cart' %}">Cart <span class="cart-count">{{ cart_count }}</span></a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'order_list' %}">My Orders</a>
+          <span class="nav-user">Hi, {{ user.username }}</span>
+          <form method="post" action="{% url 'logout' %}" class="nav-logout">{% csrf_token %}<button type="submit">Logout</button></form>
+        {% else %}
+          <a href="{% url 'login' %}">Login</a>
+          <a class="nav-register" href="{% url 'register' %}">Register</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {% if messages %}
+      <div class="messages-wrap" aria-live="polite">
+        {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-main">
+      <div class="footer-brand">
+        <a class="brand brand-light" href="{% url 'home' %}">
+          <span class="brand-mark" aria-hidden="true"><span>+</span></span>
+          <span><strong>LifeCare Pharmacy</strong><small>YOUR HEALTH, OUR PRIORITY</small></span>
+        </a>
+        <p>Your Health, Our Priority.</p>
+        <p class="footer-disclaimer">College project demonstration only. This website does not sell or dispense real medicines.</p>
+      </div>
+      <div><h3>Explore</h3><a href="{% url 'product_list' %}">Medicines</a><a href="{% url 'category_list' %}">Categories</a><a href="{% url 'cart' %}">Shopping cart</a><a href="{% url 'download_source' %}">Download source ZIP</a></div>
+      <div><h3>Account</h3>{% if user.is_authenticated %}<a href="{% url 'order_list' %}">My orders</a>{% else %}<a href="{% url 'login' %}">Login</a><a href="{% url 'register' %}">Create account</a>{% endif %}<a href="/admin/">Admin demo</a></div>
+      <div><h3>Contact</h3><p>Project helpdesk</p><a href="mailto:hello@lifecare.example">hello@lifecare.example</a><p>Mon–Fri · 9:00 AM–5:00 PM</p></div>
+    </div>
+    <div class="footer-bottom"><span>© 2026 LifeCare Pharmacy</span></div>
+  </footer>
+  <script>
+    const menuButton = document.querySelector(".menu-toggle");
+    const navigation = document.querySelector(".main-nav");
+    menuButton?.addEventListener("click", () => {
+      const expanded = menuButton.getAttribute("aria-expanded") === "true";
+      menuButton.setAttribute("aria-expanded", String(!expanded));
+      navigation.classList.toggle("nav-open", !expanded);
+    });
+  </script>
+</body>
+</html>

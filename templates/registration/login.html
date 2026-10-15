@@ -1,0 +1,9 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Login | LifeCare Pharmacy{% endblock %}
+{% block content %}
+<section class="auth-page"><div class="auth-card"><span class="auth-mark">+</span><span class="eyebrow">Welcome back</span><h1>Sign in to LifeCare</h1><p>Sign in to manage your demo orders.</p>
+{% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+<form method="post" class="auth-form">{% csrf_token %}{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+{% for field in form %}<div class="form-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<span class="field-error">{{ field.errors|join:", " }}</span>{% endif %}</div>{% endfor %}
+<button class="button button-primary button-full" type="submit">Login <span>→</span></button></form><p class="auth-switch">New to LifeCare? <a href="{% url 'register' %}">Create an account</a></p></div></section>
+{% endblock %}

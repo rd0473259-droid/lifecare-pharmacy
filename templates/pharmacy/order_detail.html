@@ -1,0 +1,10 @@
+{% extends "pharmacy/base.html" %}
+{% block title %}Order {{ order.order_number }} | LifeCare Pharmacy{% endblock %}
+{% block content %}
+<section class="section confirmation-section">
+  <div class="confirmation-head"><span class="confirmation-check">✓</span><span class="eyebrow">Order confirmed</span><h1>Thank you, {{ order.full_name }}.</h1><p>Your demonstration order has been placed successfully.</p><div class="confirmation-number">{{ order.order_number }}</div><span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span></div>
+  <div class="confirmation-grid"><div class="confirmation-panel"><h2>Items in this order</h2>{% for item in order.items.all %}<div class="checkout-item"><span>{{ item.product.name }} <small>× {{ item.quantity }}</small></span><strong>₹{{ item.line_total }}</strong></div>{% endfor %}<div class="summary-total"><span>Total</span><strong>₹{{ order.total }}</strong></div></div><div class="confirmation-panel"><h2>Delivery details</h2><p><strong>{{ order.full_name }}</strong><br>{{ order.address }}<br>{{ order.city }}, {{ order.state }} — {{ order.pin_code }}<br>{{ order.contact_number }}</p><p><span class="detail-label">Payment</span><br>{{ order.payment_method }}</p><p><span class="detail-label">Status</span><br>{{ order.get_status_display }}</p></div></div>
+  <div class="demo-notice-box"><strong>Demonstration order only.</strong> This project does not provide real medicines, pharmacy review, or delivery. If online payment was selected, it was processed by the configured Razorpay account.</div>
+  <a class="button button-outline" href="{% url 'order_list' %}">View all my orders <span>→</span></a>
+</section>
+{% endblock %}
