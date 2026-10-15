@@ -4,7 +4,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "lifecare-demo-only-change-before-any-real-deployment"
-DEBUG = True
+DEBUG = False
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "lifecare-pharmacy.onrender.com"]
 CSRF_TRUSTED_ORIGINS = ["https://lifecare-pharmacy.onrender.com"]
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "")
