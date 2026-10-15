@@ -105,7 +105,7 @@ class LifeCareStoreTests(TestCase):
         response = self.client.get(reverse("checkout"))
         self.assertRedirects(response, f"{reverse('login')}?next={reverse('checkout')}")
 
-    def test_checkout_shows_disabled_razorpay_option_without_gateway_credentials(self):
+    def test_checkout_allows_selecting_razorpay_without_gateway_credentials(self):
         self.client.force_login(self.user)
         self.client.post(reverse("cart_add", args=[self.product.pk]), {"quantity": "1"})
 
@@ -113,8 +113,10 @@ class LifeCareStoreTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Cash on Delivery")
-        self.assertContains(response, "Online payment (configure Razorpay credentials first)")
-        self.assertContains(response, 'value="Razorpay" disabled')
+        self.assertContains(response, "Online payment (Razorpay credentials required to complete payment)")
+        self.assertContains(response, 'value="Razorpay"')
+        self.assertNotContains(response, 'value="Razorpay" disabled')
+        self.assertContains(response, "Online payment can be selected, but requires Razorpay credentials to complete.")
 
     def test_checkout_rejects_razorpay_without_gateway_credentials(self):
         self.client.force_login(self.user)
@@ -133,6 +135,7 @@ class LifeCareStoreTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Online payment is unavailable")
+        self.assertNotContains(response, 'value="Razorpay" disabled')
         self.assertFalse(Order.objects.exists())
 
     def test_checkout_saves_price_and_decrements_stock(self):

@@ -64,7 +64,7 @@ This project uses Django's built-in `User` and authentication, custom HTML5 temp
    python manage.py runserver
    ```
 
-To enable online payments, set the Razorpay test credentials before starting Django in PowerShell:
+To complete online payments, set Razorpay test credentials before starting Django in PowerShell. The online payment option remains selectable without credentials, but checkout will explain that configuration is required:
 
 ```powershell
 $env:RAZORPAY_KEY_ID = "rzp_test_your_key_id"

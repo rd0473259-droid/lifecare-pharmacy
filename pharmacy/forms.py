@@ -9,18 +9,6 @@ PAYMENT_METHOD_CHOICES = [
 ]
 
 
-class PaymentMethodSelect(forms.Select):
-    def __init__(self, *args, razorpay_enabled=False, **kwargs):
-        self.razorpay_enabled = razorpay_enabled
-        super().__init__(*args, **kwargs)
-
-    def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
-        option = super().create_option(name, value, label, selected, index, subindex, attrs)
-        if value == "Razorpay" and not self.razorpay_enabled:
-            option["attrs"]["disabled"] = True
-        return option
-
-
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -53,7 +41,7 @@ class CheckoutForm(forms.Form):
         choices=PAYMENT_METHOD_CHOICES,
         initial="Cash on Delivery",
         label="Payment method",
-        widget=PaymentMethodSelect,
+        widget=forms.Select,
     )
     notes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 2}), max_length=1000)
 
@@ -63,9 +51,8 @@ class CheckoutForm(forms.Form):
         if not razorpay_enabled:
             self.fields["payment_method"].choices = [
                 ("Cash on Delivery", "Cash on Delivery"),
-                ("Razorpay", "Online payment (configure Razorpay credentials first)"),
+                ("Razorpay", "Online payment (Razorpay credentials required to complete payment)"),
             ]
-        self.fields["payment_method"].widget.razorpay_enabled = razorpay_enabled
 
     def clean_payment_method(self):
         payment_method = self.cleaned_data["payment_method"]
