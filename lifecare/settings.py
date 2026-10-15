@@ -5,8 +5,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "lifecare-demo-only-change-before-any-real-deployment"
 DEBUG = True
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", ".replit.dev", ".replit.app"]
-CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev:3002"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0", "lifecare-pharmacy.onrender.com"]
+CSRF_TRUSTED_ORIGINS = ["https://lifecare-pharmacy.onrender.com"]
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "")
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "")
 RAZORPAY_ENABLED = bool(RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET)
